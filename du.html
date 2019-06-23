@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script>L_PREFER_CANVAS=false; L_NO_TOUCH=false; L_DISABLE_3D=false;</script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.4.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.4.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:relative;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="http://www.w3schools.com/lib/w3data.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #888;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidebar a {
+  padding: 8px 8px 32px 8px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  transition: margin-right .5s;
+  padding: 5px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+
+    <meta name="viewport" content="width=device-width,
+        initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>#map_06d9bfd97eb646c4a621693da3db78a0 {
+        position: relative;
+        width: 100.0%;
+        height: 100.0%;
+        left: 0.0%;
+        top: 0.0%;
+        }
+    </style>
+</head>
+<body>    
+    <div id="mySidebar" class="sidebar">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+   <form method="post">
+					<div>
+					<label for="ville">ville: </label>
+					<select class="custom-select" id="ville" name="ville" value="{{ request.form['ville'] }}">
+					    {% for ville in villes %}
+						<option value="{{ ville }}">{{ ville }}</option>
+					    {% endfor %}
+					</select>
+					</div>
+					<div>
+					<label for="road">Road Type: </label>
+					<select class="custom-select"id="road" name="road" value="{{ request.form['road'] }}">
+					    {% for road in roads %}
+						<option value="{{ road }}">{{ road }}</option>
+					    {% endfor %}
+					</select>
+					</div>
+					<div>
+					<strong> Statistique sur l'accident </strong>
+					<input type="checkbox" name="stats" value = "stats" >
+					</div>
+					<div>
+					<strong> Statistique sur le temps </strong>
+					<input type="checkbox" name="stat" value = "stat">
+					</div>
+					<div>
+
+					<strong> information sur la route </strong>
+					<input type="checkbox" name="info" value = "info">
+					</div>								
+					<div>
+					<input type="checkbox" name="date" value = "date">
+					</div>
+					<div>
+					<strong> Start day </strong>
+					<input type="date" name="startday">
+					</div>
+					<div>
+					<strong> End day </strong>
+					<input type="date" name="endday">
+					</div>
+					<input type="submit" name="action" value="Search">
+			</form>
+</div>
+
+<div id="main">
+  <button position="absolute" class="openbtn" onclick="openNav()"> ☰ </button>  
+  
+</div>
+<div id="body">
+    <div  class="folium-map" id="map_06d9bfd97eb646c4a621693da3db78a0" ></div>
+</div>
+<script>
+function openNav() {
+  document.getElementById("mySidebar").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+  document.getElementById("body").style.marginLeft = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+  document.getElementById("body").style.marginLeft = "0";
+}
+</script>
+</body>
+<script>    
+    
+    
+        var bounds = null;
+    
+
+    var map_06d9bfd97eb646c4a621693da3db78a0 = L.map(
+        'map_06d9bfd97eb646c4a621693da3db78a0', {
+        center: [33.9716, -6.8498],
+        zoom: 12,
+        maxBounds: bounds,
+        layers: [],
+        worldCopyJump: false,
+        crs: L.CRS.EPSG3857,
+        zoomControl: true,
+        });
+
+
+    
+    var tile_layer_470d7000e1c94c95b62327a70101903c = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+        "attribution": null,
+        "detectRetina": false,
+        "maxNativeZoom": 18,
+        "maxZoom": 18,
+        "minZoom": 0,
+        "noWrap": false,
+        "opacity": 1,
+        "subdomains": "abc",
+        "tms": false
+}).addTo(map_06d9bfd97eb646c4a621693da3db78a0);
+</script>
+
